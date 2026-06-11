@@ -1,0 +1,6 @@
+.streamlit/secrets.toml
+__pycache__/
+*.pyc
+*.pth
+*.pt
+results/detection_results.csv
