@@ -1,5 +1,4 @@
 streamlit
-opencv-python
 numpy
 pandas
 Pillow
@@ -8,3 +7,4 @@ torchvision
 ultralytics
 requests
 google-generativeai
+opencv-python-headless
