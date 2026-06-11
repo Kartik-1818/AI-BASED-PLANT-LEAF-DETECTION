@@ -197,8 +197,9 @@ def load_models():
             
         leaf_model = YOLO(leaf_model_path)
         disease_model = CNN_NeuralNet()
-        torch.serialization.add_safe_globals([DetectionModel])
-        disease_model.load_state_dict(torch.load(disease_model_path, map_location=device, weights_only=False))
+        disease_model.load_state_dict(
+            torch.load(disease_model_path, map_location=torch.device('cpu'), weights_only=False)
+        )
         disease_model.to(device)
         disease_model.eval()
         
