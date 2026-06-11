@@ -18,15 +18,24 @@ import gdown
 import os
 
 def download_models():
+    import requests
+
+    def download_from_drive(file_id, output):
+        URL = "https://drive.google.com/uc"
+        session = requests.Session()
+        response = session.get(URL, params={"id": file_id, "confirm": "t", "export": "download"}, stream=True)
+        with open(output, "wb") as f:
+            for chunk in response.iter_content(32768):
+                if chunk:
+                    f.write(chunk)
+
     if not os.path.exists('plant_disease_model.pth'):
         print("Downloading disease model...")
-        # https://drive.google.com/file/d/1RbqZwmy-7nL_fs7qp9xvknWucFJ4gaFC/view?usp=share_link
-        gdown.download(id="1RbqZwmy-7nL_fs7qp9xvknWucFJ4gaFC", output='plant_disease_model.pth', quiet=False)
-    if not os.path.exists('leaf_detection_model.pt'):
-        # https://drive.google.com/file/d/1kZcF8-hJN55-LfDigskhb4ihKy8n_2q9/view?usp=share_link
-        print("Downloading leaf detection model...")
-        gdown.download(id="1kZcF8-hJN55-LfDigskhb4ihKy8n_2q9", output='leaf_detection_model.pt', quiet=False)
+        download_from_drive("1RbqZwmy-7nL_fs7qp9xvknWucFJ4gaFC", "plant_disease_model.pth")
 
+    if not os.path.exists('leaf_detection_model.pt'):
+        print("Downloading leaf detection model...")
+        download_from_drive("1kZcF8-hJN55-LfDigskhb4ihKy8n_2q9", "leaf_detection_model.pt")
 download_models()
 # --- Constants ---
 CSV_FILENAME = 'results/detection_results.csv'
