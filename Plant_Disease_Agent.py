@@ -18,17 +18,12 @@ import gdown
 import os
 
 def download_models():
-    # Force re-download to clear wrong cached files
-    import os
-    if os.path.exists('plant_disease_model.pth'):
-        os.remove('plant_disease_model.pth')
-    if os.path.exists('leaf_detection_model.pt'):
-        os.remove('leaf_detection_model.pt')
-    
-    print("Downloading disease model...")
-    gdown.download(id="1RbqZwmy-7nL_fs7qp9xvknWucFJ4gaFC", output='plant_disease_model.pth', quiet=False)
-    print("Downloading leaf detection model...")
-    gdown.download(id="1kZcF8-hJN55-LfDigskhb4ihKy8n_2q9", output='leaf_detection_model.pt', quiet=False)
+    if not os.path.exists('plant_disease_model.pth'):
+        print("Downloading disease model...")
+        gdown.download(id="1RbqZwmy-7nL_fs7qp9xvknWucFJ4gaFC", output='plant_disease_model.pth', quiet=False)
+    if not os.path.exists('leaf_detection_model.pt'):
+        print("Downloading leaf detection model...")
+        gdown.download(id="1kZcF8-hJN55-LfDigskhb4ihKy8n_2q9", output='leaf_detection_model.pt', quiet=False)
 
 download_models()
 # --- Constants ---
