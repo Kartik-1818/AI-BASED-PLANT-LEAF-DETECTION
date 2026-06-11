@@ -10,6 +10,8 @@ genai = None
 import os
 from datetime import datetime
 from disease_detection_v2 import CNN_NeuralNet
+import torch.serialization
+from ultralytics.nn.tasks import DetectionModel
 
 import csv
 import gdown
@@ -196,7 +198,8 @@ def load_models():
             
         leaf_model = YOLO(leaf_model_path)
         disease_model = CNN_NeuralNet()
-        disease_model.load_state_dict(torch.load(disease_model_path, map_location=device))
+        torch.serialization.add_safe_globals([DetectionModel])
+        disease_model.load_state_dict(torch.load(disease_model_path, map_location=device, weights_only=False))
         disease_model.to(device)
         disease_model.eval()
         
