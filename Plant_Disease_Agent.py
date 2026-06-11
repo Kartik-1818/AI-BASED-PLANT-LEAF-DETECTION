@@ -20,8 +20,10 @@ import os
 def download_models():
     if not os.path.exists('plant_disease_model.pth'):
         print("Downloading disease model...")
+        # https://drive.google.com/file/d/1RbqZwmy-7nL_fs7qp9xvknWucFJ4gaFC/view?usp=share_link
         gdown.download(id="1RbqZwmy-7nL_fs7qp9xvknWucFJ4gaFC", output='plant_disease_model.pth', quiet=False)
     if not os.path.exists('leaf_detection_model.pt'):
+        # https://drive.google.com/file/d/1kZcF8-hJN55-LfDigskhb4ihKy8n_2q9/view?usp=share_link
         print("Downloading leaf detection model...")
         gdown.download(id="1kZcF8-hJN55-LfDigskhb4ihKy8n_2q9", output='leaf_detection_model.pt', quiet=False)
 
