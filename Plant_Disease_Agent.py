@@ -20,16 +20,10 @@ import os
 def download_models():
     if not os.path.exists('plant_disease_model.pth'):
         print("Downloading disease model...")
-        gdown.download(
-            "https://drive.google.com/file/d/1kZcF8-hJN55-LfDigskhb4ihKy8n_2q9/view?usp=share_link",
-            'plant_disease_model.pth', quiet=False
-        )
+        gdown.download(id="1kZcF8-hJN55-LfDigskhb4ihKy8n_2q9", output='plant_disease_model.pth', quiet=False)
     if not os.path.exists('leaf_detection_model.pt'):
         print("Downloading leaf detection model...")
-        gdown.download(
-            "https://drive.google.com/file/d/1kZcF8-hJN55-LfDigskhb4ihKy8n_2q9/view?usp=share_link",
-            'leaf_detection_model.pt', quiet=False
-        )
+        gdown.download(id="YOUR_LEAF_MODEL_FILE_ID", output='leaf_detection_model.pt', quiet=False)
 
 download_models()
 # --- Constants ---
