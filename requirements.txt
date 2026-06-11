@@ -9,3 +9,4 @@ requests
 google-generativeai
 opencv-python-headless
 gdown
+dill
