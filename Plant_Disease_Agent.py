@@ -12,7 +12,24 @@ from datetime import datetime
 from disease_detection_v2 import CNN_NeuralNet
 
 import csv
+import gdown
+import os
 
+def download_models():
+    if not os.path.exists('plant_disease_model.pth'):
+        print("Downloading disease model...")
+        gdown.download(
+            "https://drive.google.com/file/d/1kZcF8-hJN55-LfDigskhb4ihKy8n_2q9/view?usp=share_link",
+            'plant_disease_model.pth', quiet=False
+        )
+    if not os.path.exists('leaf_detection_model.pt'):
+        print("Downloading leaf detection model...")
+        gdown.download(
+            "https://drive.google.com/file/d/1kZcF8-hJN55-LfDigskhb4ihKy8n_2q9/view?usp=share_link",
+            'leaf_detection_model.pt', quiet=False
+        )
+
+download_models()
 # --- Constants ---
 CSV_FILENAME = 'results/detection_results.csv'
 LANG_OPTIONS = {
