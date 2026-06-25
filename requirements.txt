@@ -7,6 +7,5 @@ torchvision
 ultralytics
 requests
 google-generativeai
-opencv-python-headless==4.8.1.78
 gdown
 dill
