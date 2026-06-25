@@ -12,22 +12,18 @@ from datetime import datetime
 from disease_detection_v2 import CNN_NeuralNet
 import torch.serialization
 from ultralytics.nn.tasks import DetectionModel
+torch.classes.__path__ = []
 
 import csv
 import gdown
 import os
 
 def download_models():
-    import requests
+    import gdown
 
     def download_from_drive(file_id, output):
-        URL = "https://drive.google.com/uc"
-        session = requests.Session()
-        response = session.get(URL, params={"id": file_id, "confirm": "t", "export": "download"}, stream=True)
-        with open(output, "wb") as f:
-            for chunk in response.iter_content(32768):
-                if chunk:
-                    f.write(chunk)
+        url = f"https://drive.google.com/uc?id={file_id}"
+        gdown.download(url, output, quiet=False)
 
     if not os.path.exists('plant_disease_model.pth'):
         print("Downloading disease model...")
