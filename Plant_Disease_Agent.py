@@ -6,7 +6,6 @@ import torch.nn.functional as F
 from torchvision import transforms
 from PIL import Image
 from ultralytics import YOLO
-genai = None
 import os
 from datetime import datetime
 from disease_detection_v2 import CNN_NeuralNet
@@ -545,12 +544,8 @@ def get_genai_recommendations(cropped_leaf_rgb, plant_type_guess, condition_gues
         return "Gemini is disabled (no server API key configured)."
     
     try:
-        global genai
-        if genai is None:
-            import google.generativeai as genai
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel(model_name)
-        
+        from google import genai
+        client = genai.Client(api_key=api_key)
         # Convert the numpy RGB image to a PIL Image for Gemini
         pil_img = Image.fromarray(cropped_leaf_rgb)
         
@@ -593,7 +588,10 @@ def get_genai_recommendations(cropped_leaf_rgb, plant_type_guess, condition_gues
             - Then: **Escalate If** (bullets)
             """
         
-        response = model.generate_content([prompt, pil_img])
+        response = client.models.generate_content(
+            model=model_name,
+            contents=[prompt, pil_img]
+        )
         return response.text
     except Exception as e:
         return f"Gemini error (model {model_name}): {e}"
@@ -603,13 +601,12 @@ def fetch_available_gemini_models():
     if not api_key:
         return []
     try:
-        global genai
-        if genai is None:
-            import google.generativeai as genai
-        genai.configure(api_key=api_key)
+        from google import genai
+        client = genai.Client(api_key=api_key)
         models = []
-        for m in genai.list_models():
-            if 'generateContent' in getattr(m, 'supported_generation_methods', []):
+        for m in client.models.list():
+            actions = getattr(m, 'supported_actions', None) or []
+            if 'generateContent' in actions:
                 name = getattr(m, 'name', '')
                 if name.startswith('models/'):
                     name = name[len('models/'):]

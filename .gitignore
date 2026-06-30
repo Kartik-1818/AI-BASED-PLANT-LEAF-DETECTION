@@ -3,4 +3,5 @@ __pycache__/
 *.pyc
 *.pth
 *.pt
-results/detection_results.csv
+results/detection_results.csv.streamlit/secrets.toml
+.streamlit/secrets.toml

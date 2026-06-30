@@ -5,7 +5,7 @@ torch
 torchvision
 ultralytics
 requests
-google-generativeai
+google-genai
 gdown
 dill
 numpy<2

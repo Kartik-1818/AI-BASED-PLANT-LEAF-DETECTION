@@ -112,3 +112,4 @@ timestamp,plant_type,condition,confidence,latitude,longitude,gps_valid
 2026-06-11T12:47:02.289770,"Pepper, bell",healthy,0.9439
 2026-06-11T12:48:01.291836,"Pepper, bell",healthy,0.9439
 2026-06-11T12:48:30.142427,"Pepper, bell",healthy,0.9439
+2026-06-30T21:44:05.108309,"Pepper, bell",healthy,0.9439
