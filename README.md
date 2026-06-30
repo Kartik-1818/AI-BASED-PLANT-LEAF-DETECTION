@@ -1,50 +1,58 @@
 # 🌿 AI-Based Plant Leaf Disease Detection & Guidance Agent
 
-An end-to-end deep learning web application that detects plant leaf diseases from photos and provides AI-powered treatment guidance. Built with PyTorch, YOLOv8, and Streamlit — with optional Google Gemini integration for detailed agronomic advice.
+An end-to-end deep learning web app that detects plant leaf diseases from photos and gives AI-powered treatment guidance. Built with YOLOv8, Clasification models and Streamlit — with optional Google Gemini integration for detailed advice.
+
+**Live demo :** https://aibasedplantdetection.streamlit.app/
+
+---
+
+## 🚀 Quick Start (Local)
+
+```bash
+# 1. Clone
+git clone https://github.com/Kartik-1818/AI-BASED-PLANT-LEAF-DETECTION.git
+cd AI-BASED-PLANT-LEAF-DETECTION
+
+# 2. (Recommended) Virtual environment
+python -m venv venv
+source venv/bin/activate        # macOS/Linux
+venv\Scripts\activate           # Windows
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. (Optional) Add your Gemini API key — one-time setup
+cp .streamlit/secrets.example.toml .streamlit/secrets.toml
+# Open secrets.toml and paste: GEMINI_API_KEY = "your-key-here"
+
+# 5. Run
+streamlit run Plant_Disease_Agent.py
+```
+
+App opens at `http://localhost:8501`. You only set the Gemini key **once** — it lives in `secrets.toml`, not something users re-enter each time. Without a key, the app still works using built-in short advice (Gemini is optional, not required).
 
 ---
 
 ## ✨ Features
 
-- **Leaf Detection** — YOLOv8 model automatically locates and crops leaf regions from uploaded images
+- **Leaf Detection** — YOLOv8 locates and crops the leaf region from any uploaded photo
 - **Disease Classification** — Custom CNN classifies 38 disease conditions across 14 plant species
-- **AI Guidance** — Short built-in advice for every prediction; optional Gemini integration for detailed treatment plans
-- **Multilingual UI** — Supports English and Hindi interfaces
-- **Results Dashboard** — Logs every detection to CSV; a dedicated analytics page (`Results Analysis`) visualizes history with charts and a color-coded map
-- **Codespaces Ready** — `.devcontainer` config launches the app automatically in GitHub Codespaces
+- **AI Guidance** — Built-in short advice always available; Gemini gives detailed, image-grounded treatment plans
+- **Multilingual UI** — English and Hindi
+- **Results Dashboard** — Every detection logs to CSV, visualized on a separate analytics page
+- **Codespaces Ready** — Zero-setup launch via `.devcontainer`
 
 ---
 
-## 🤖 AI-Augmented Building
+## 🤖 How AI Is Used (Build + Runtime)
 
-This project uses AI in two distinct ways: as a **runtime component** (the Gemini guidance layer) and as a **development aid** (used while building the app). Both are described below rather than left implicit.
+**At runtime:** Gemini is called with the cropped leaf image plus the CNN's predicted plant/condition, and returns a structured response (diagnosis confirmation → symptoms → action plan → prevention). The prompt is explicitly different for "short" vs "detailed" mode — short mode isn't a truncated version of the long one, it's a separate prompt. If no API key is set, the app falls back to built-in offline guidance instead of failing.
 
-### AI as a runtime component (LLM integration)
-
-The "Use Gemini Guidance" feature calls the Google Gemini API at inference time to convert a raw classification result (e.g. `Tomato___Early_Blight`, confidence 0.91) into a structured, farmer-readable treatment plan. This wasn't a default prompt — it was iterated on:
-
-- The prompt explicitly passes the predicted class, confidence score, and optional **Plant Type** context the user provides, so Gemini doesn't have to guess the crop from the label alone.
-- Output is constrained to a fixed structure (cause → symptoms → treatment steps → prevention) so the UI can render it consistently rather than dumping freeform text.
-- A **Guidance Mode** toggle (short summary vs. detailed plan) controls prompt verbosity rather than truncating the same response, so short mode is a different prompt, not a cut-off long one.
-- Language switching (English/Hindi) is handled by instructing Gemini to respond in the selected language rather than running a separate translation step, which kept the guidance idiomatic instead of literal.
-- The built-in (non-Gemini) short advice strings act as a fallback path, so the app degrades gracefully without an API key instead of failing.
-
-### AI as a development aid
-
-While building the app, AI coding tools were used for specific, directed tasks rather than wholesale generation:
-
-- Scaffolding the Streamlit multi-page structure (`pages/2_Results_Analysis.py`) and wiring it to a shared CSV log.
-- Drafting the boilerplate for the `.devcontainer` config so the app runs zero-setup in Codespaces.
-- Debugging the YOLOv8 → crop → CNN handoff (bounding box padding, confidence thresholds) where AI suggestions were tested and adjusted against real leaf images rather than accepted as-is.
-- Generating first-draft chart code for the Results Analysis dashboard, which was then customized for the color-coded map view.
-
-The architecture decisions — residual block design, the specific confidence thresholds (`Leaf Detection Confidence`, `Min Disease Confidence`), crop padding logic, and the decision to keep Gemini optional with a built-in fallback — were made and tuned manually, not generated wholesale.
+**While building:** AI coding tools were used for specific tasks — debugging the YOLOv8 → crop → CNN pipeline, scaffolding the analytics dashboard page, and migrating the Gemini integration from the deprecated `google-generativeai` SDK to the current `google-genai` SDK. Architecture choices (residual CNN blocks, confidence thresholds, the optional-Gemini-with-fallback design) were made and tuned manually.
 
 ---
 
-## 🌱 Supported Plants & Diseases
-
-The model is trained on the [PlantVillage dataset](https://www.kaggle.com/datasets/vipoooool/new-plant-diseases-dataset) and recognizes **38 classes** across **14 species**:
+## 🌱 Supported Plants & Diseases (38 classes, 14 species)
 
 | Plant | Conditions |
 |---|---|
@@ -63,32 +71,7 @@ The model is trained on the [PlantVillage dataset](https://www.kaggle.com/datase
 | Strawberry | Leaf Scorch, Healthy |
 | Tomato | Bacterial Spot, Early Blight, Late Blight, Leaf Mold, Septoria Leaf Spot, Spider Mites, Target Spot, Yellow Leaf Curl Virus, Mosaic Virus, Healthy |
 
----
-
-## Project Structure
-
-```
-AI-BASED-PLANT-LEAF-DETECTION-main/
-│
-├── Plant_Disease_Agent.py      # Main Streamlit app (entry point)
-├── disease_detection_v2.py     # CNN model architecture & inference logic
-├── evaluate_model.py           # Offline model evaluation script
-│
-├── pages/
-│   └── 2_Results_Analysis.py  # Streamlit analytics dashboard page
-│
-├── results/
-│   └── detection_results.csv  # Auto-generated detection history log
-│
-├── .streamlit/
-│   └── secrets.example.toml   # Template for Gemini API key config
-│
-├── .devcontainer/
-│   └── devcontainer.json       # GitHub Codespaces configuration
-│
-├── requirements.txt            # Python dependencies
-└── runtime.txt                 # Python version pin
-```
+Trained on the [PlantVillage dataset](https://www.kaggle.com/datasets/vipoooool/new-plant-diseases-dataset).
 
 ---
 
@@ -98,62 +81,14 @@ AI-BASED-PLANT-LEAF-DETECTION-main/
 |---|---|
 | Web Framework | Streamlit |
 | Leaf Detection | YOLOv8 (Ultralytics) |
-| Disease Classification | Custom CNN (PyTorch + ResNet-style blocks) |
-| AI Guidance | Google Gemini API (optional) |
-| Image Processing | OpenCV, Pillow |
-| Model Download | gdown (Google Drive) |
+| Disease Classification | Custom CNN (PyTorch, ResNet-style) |
+| AI Guidance | Google Gemini API (`google-genai`, optional) |
+| Image Processing | OpenCV (headless), Pillow |
 | Data / Analytics | Pandas, NumPy |
 
 ---
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Python 3.11+
-- pip
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/your-username/AI-BASED-PLANT-LEAF-DETECTION.git
-cd AI-BASED-PLANT-LEAF-DETECTION
-```
-
-### 2. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3. (Optional) Configure Gemini API key
-
-For detailed AI-powered treatment guidance, add a free Gemini key from [aistudio.google.com](https://aistudio.google.com/):
-
-```bash
-cp .streamlit/secrets.example.toml .streamlit/secrets.toml
-# Edit secrets.toml and add your key
-```
-
-### 4. Launch the app
-
-```bash
-streamlit run Plant_Disease_Agent.py
-```
-
-The app will open at `http://localhost:8501`. Pre-trained models are downloaded automatically from Google Drive on first run.
-
----
-
-## ☁️ Run in GitHub Codespaces (Zero Setup)
-
-Click **Code → Open with Codespaces** on the repository page. The devcontainer will install all dependencies and launch the Streamlit app automatically — no local setup required.
-
----
-
 ## 🧠 Model Architecture
-
-The disease classifier (`CNN_NeuralNet`) is a custom ResNet-style CNN:
 
 ```
 Input (3 × 256 × 256)
@@ -166,17 +101,17 @@ Input (3 × 256 × 256)
   → GlobalMaxPool → Flatten → Linear(512 → 38)
 ```
 
-Each residual block uses skip connections to improve gradient flow and prevent degradation during training. Batch normalization is applied after every convolution.
+Skip connections in each residual block improve gradient flow; batch normalization follows every convolution.
 
 ---
 
 ## 📊 How It Works
 
-1. **Upload** a clear photo of a plant leaf
-2. **YOLOv8** detects and crops the leaf region(s) from the image
-3. **CNN** classifies each cropped leaf into one of 38 disease/healthy classes
-4. **Guidance** is displayed immediately; enable Gemini for detailed treatment steps
-5. **Results** are logged to `results/detection_results.csv` and visible in the Results Analysis page
+1. Upload a clear leaf photo
+2. YOLOv8 detects and crops the leaf
+3. CNN classifies it into one of 38 classes
+4. Guidance shown instantly (Gemini optional for detail)
+5. Result logged to `results/detection_results.csv` and viewable on the analytics page
 
 ---
 
@@ -184,22 +119,42 @@ Each residual block uses skip connections to improve gradient flow and prevent d
 
 | Setting | Description |
 |---|---|
-| Use Gemini Guidance | Toggle detailed AI advice (requires API key) |
-| Guidance Mode | Short summary vs. detailed treatment plan |
+| Use Gemini Guidance | Toggle detailed AI advice (needs API key) |
+| Guidance Mode | Short vs Detailed |
 | Language | English / Hindi |
-| Leaf Detection Confidence | Minimum YOLOv8 confidence threshold |
-| Min Disease Confidence | Minimum CNN confidence to report a disease |
-| Max Leaves To Check | Limit detections per image |
-| Crop Padding | Padding around detected leaf bounding box |
-| Plant Type (optional) | Provide context to improve accuracy |
+| Leaf Detection Confidence | Min YOLOv8 confidence |
+| Min Disease Confidence | Min CNN confidence to report a disease |
+| Max Leaves To Check | Limit per image |
+| Crop Padding | Padding around detected leaf box |
+| Plant Type (optional) | Helps disambiguate similar diseases |
+
+---
+
+## ☁️ Deploying to Streamlit Community Cloud
+
+1. Push your repo to GitHub — make sure `requirements.txt`, `Plant_Disease_Agent.py`, and the model files (`leaf_detection_model.pt`, `plant_disease_model.pth`) are all committed.
+   - ⚠️ If `.gitignore` has `*.pt` / `*.pth`, force-add the model files: `git add -f leaf_detection_model.pt plant_disease_model.pth`
+   - ⚠️ Make sure `secrets.toml` is **never** committed (should be in `.gitignore`)
+2. Go to [share.streamlit.io](https://share.streamlit.io) → **New app**
+3. Fill in:
+   - Repository: `https://github.com/Kartik-1818/AI-BASED-PLANT-LEAF-DETECTION`
+   - Branch: `main`
+   - Main file path: `Plant_Disease_Agent.py`
+4. Under **Advanced settings → Secrets**, paste:
+   ```toml
+   GEMINI_API_KEY = "your-actual-key-here"
+   ```
+5. Click **Deploy** and watch the build log.
+
+If deploy says *"This repository does not exist"*, it's almost always a GitHub App permission issue, not a URL typo — check GitHub → Settings → Applications → Streamlit → Configure, and confirm this repo is checked under repository access.
 
 ---
 
 ## Known Limitations
 
-- The CNN is trained on **PlantVillage benchmark images** (controlled, lab-style photos). Real-field images with complex backgrounds may reduce accuracy.
-- Only **14 plant species** are supported. Wheat, rice, sugarcane, and other staple crops are not yet included — this is a dataset limitation, not an architectural one.
-- Very low-resolution or heavily blurred images may fail leaf detection.
+- Trained on **PlantVillage lab-style images** — real-field photos with messy backgrounds may reduce accuracy
+- Only **14 species** supported (no wheat, rice, sugarcane yet — dataset limitation, not architectural)
+- Very low-res or blurry images may fail leaf detection
 
 ---
 
@@ -207,7 +162,7 @@ Each residual block uses skip connections to improve gradient flow and prevent d
 
 - [ ] Field-collected images for Indian crops (wheat, rice, sugarcane)
 - [ ] User feedback loop for continuous model improvement
-- [ ] Mobile-optimized UI for low-end Android devices
+- [ ] Mobile-optimized UI
 - [ ] Public Streamlit Cloud deployment
 
 ---
@@ -223,4 +178,4 @@ Each residual block uses skip connections to improve gradient flow and prevent d
 
 ## 📄 License
 
-This project is open-source. See [LICENSE](LICENSE) for details.
+Open-source. See [LICENSE](LICENSE) for details.
