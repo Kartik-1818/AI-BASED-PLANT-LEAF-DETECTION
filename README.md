@@ -38,7 +38,7 @@ The model is trained on the [PlantVillage dataset](https://www.kaggle.com/datase
 
 ---
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 AI-BASED-PLANT-LEAF-DETECTION-main/
