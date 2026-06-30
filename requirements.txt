@@ -1,5 +1,4 @@
 streamlit
-numpy
 pandas
 Pillow
 torch
@@ -9,3 +8,5 @@ requests
 google-generativeai
 gdown
 dill
+numpy<2
+opencv-python-headless<4.10
