@@ -168,7 +168,7 @@ Each residual block uses skip connections to improve gradient flow and prevent d
 
 ---
 
-## ⚠️ Known Limitations
+## Known Limitations
 
 - The CNN is trained on **PlantVillage benchmark images** (controlled, lab-style photos). Real-field images with complex backgrounds may reduce accuracy.
 - Only **14 plant species** are supported. Wheat, rice, sugarcane, and other staple crops are not yet included — this is a dataset limitation, not an architectural one.
@@ -176,7 +176,7 @@ Each residual block uses skip connections to improve gradient flow and prevent d
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
 - [ ] Field-collected images for Indian crops (wheat, rice, sugarcane)
 - [ ] User feedback loop for continuous model improvement
