@@ -15,6 +15,33 @@ An end-to-end deep learning web application that detects plant leaf diseases fro
 
 ---
 
+## 🤖 AI-Augmented Building
+
+This project uses AI in two distinct ways: as a **runtime component** (the Gemini guidance layer) and as a **development aid** (used while building the app). Both are described below rather than left implicit.
+
+### AI as a runtime component (LLM integration)
+
+The "Use Gemini Guidance" feature calls the Google Gemini API at inference time to convert a raw classification result (e.g. `Tomato___Early_Blight`, confidence 0.91) into a structured, farmer-readable treatment plan. This wasn't a default prompt — it was iterated on:
+
+- The prompt explicitly passes the predicted class, confidence score, and optional **Plant Type** context the user provides, so Gemini doesn't have to guess the crop from the label alone.
+- Output is constrained to a fixed structure (cause → symptoms → treatment steps → prevention) so the UI can render it consistently rather than dumping freeform text.
+- A **Guidance Mode** toggle (short summary vs. detailed plan) controls prompt verbosity rather than truncating the same response, so short mode is a different prompt, not a cut-off long one.
+- Language switching (English/Hindi) is handled by instructing Gemini to respond in the selected language rather than running a separate translation step, which kept the guidance idiomatic instead of literal.
+- The built-in (non-Gemini) short advice strings act as a fallback path, so the app degrades gracefully without an API key instead of failing.
+
+### AI as a development aid
+
+While building the app, AI coding tools were used for specific, directed tasks rather than wholesale generation:
+
+- Scaffolding the Streamlit multi-page structure (`pages/2_Results_Analysis.py`) and wiring it to a shared CSV log.
+- Drafting the boilerplate for the `.devcontainer` config so the app runs zero-setup in Codespaces.
+- Debugging the YOLOv8 → crop → CNN handoff (bounding box padding, confidence thresholds) where AI suggestions were tested and adjusted against real leaf images rather than accepted as-is.
+- Generating first-draft chart code for the Results Analysis dashboard, which was then customized for the color-coded map view.
+
+The architecture decisions — residual block design, the specific confidence thresholds (`Leaf Detection Confidence`, `Min Disease Confidence`), crop padding logic, and the decision to keep Gemini optional with a built-in fallback — were made and tuned manually, not generated wholesale.
+
+---
+
 ## 🌱 Supported Plants & Diseases
 
 The model is trained on the [PlantVillage dataset](https://www.kaggle.com/datasets/vipoooool/new-plant-diseases-dataset) and recognizes **38 classes** across **14 species**:
